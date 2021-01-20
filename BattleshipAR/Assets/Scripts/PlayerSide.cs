@@ -9,15 +9,18 @@ public class PlayerSide : MonoBehaviour
 {
     public Image cellPrefab;
     public RectTransform legendPrefab;
+    [Range(0.1f, 1f)]public float cellScale = 1f;
     
     private const int gridSize = 10;
 
     private RectTransform rect;
     private CellState[] cells;
     private int playerIndex = 0;
-    private float size;
+    private float width, height;
     private float cellSize;
-    private float padding;
+    private Vector2 cellSizeRatio;
+    private Vector2 scaledCellSizeRatio;
+    private Vector2 padding;
 
     private string[] legend =
     {
@@ -39,61 +42,78 @@ public class PlayerSide : MonoBehaviour
     private void Start()
     {
         cells = new CellState[gridSize * gridSize];
-        size = rect.rect.width;
-        cellSize = size / gridSize;
-        padding = cellSize * 3; //size * 0.05f;
+        width = rect.rect.width;
+        height = rect.rect.height;
+        cellSize = width / gridSize;
+        cellSizeRatio = new Vector2(cellSize / width, cellSize / height);
+        padding = cellSizeRatio * 0.1f;
+        scaledCellSizeRatio = cellSizeRatio * cellScale;
 
-        //DrawLegend();
-        PopulateShipCells();
+        DrawLegend(new Vector2(scaledCellSizeRatio.x , 0));
+        PopulateShipCells(new Vector2(scaledCellSizeRatio.x * 2f + padding.x, 0f));
         
         print($"Player {playerIndex} is ready");
     }
 
-    private void DrawLegend()
+    private void DrawLegend(Vector2 origin)
     {
+        Vector2 cellAnchorMin = Vector2.zero;
+        Vector2 cellAnchorMax = Vector2.zero; 
+        
         for (int y = 0, i = 0; y <= gridSize; y++)
         {
             int rowWidth = y == gridSize ? gridSize : 1;
-            float offset = rowWidth == gridSize ? cellSize : 0f;
+            float shift = rowWidth == gridSize ? scaledCellSizeRatio.x + padding.x : 0f;
+            float offsetY = origin.y + padding.y * (y + 1);
+            cellAnchorMin.y = y * scaledCellSizeRatio.y + offsetY;
+            cellAnchorMax.y = (y + 1) * scaledCellSizeRatio.y + offsetY;
+
             for (int x = 0; x < rowWidth; x++, i++)
             {
-                RectTransform legendCell = Instantiate(legendPrefab) as RectTransform;
-                legendCell.transform.parent = transform;
-                Vector2 offsetPos = new Vector2(offset + padding * 0.66f, padding / 6);
-                Vector2 cellPos = new Vector2(x * cellSize, y * cellSize) + offsetPos;
-                legendCell.anchoredPosition = cellPos;
-                legendCell.sizeDelta = Vector2.one * cellSize * 0.9f;
+                RectTransform cell = Instantiate(legendPrefab) as RectTransform;
+                cell.transform.parent = transform;
                 
-                Text txt = legendCell.GetComponentInChildren<Text>();
+                float xOffset = shift + origin.x + padding.x * (x + 1);
+                cellAnchorMin.x = x * scaledCellSizeRatio.x + xOffset;
+                cellAnchorMax.x = (x + 1) * scaledCellSizeRatio.x + xOffset;
+                cell.anchorMin = cellAnchorMin;
+                cell.anchorMax = cellAnchorMax;
+                cell.offsetMax = cell.offsetMin = Vector2.zero;
+                
+                Text txt = cell.GetComponentInChildren<Text>();
                 txt.text = legend[i];
-                txt.fontSize = (int) (cellSize * 0.8f);
+                txt.fontSize = (int) (cellSize * 0.5f);
             }
         }
     }
 
-    private void PopulateShipCells()
+    private void PopulateShipCells(Vector2 origin)
     {
-        float cellSizeRatio = cellSize / size;
-        float paddingRatio = cellSizeRatio * 0.25f;
         Vector2 cellAnchorMin = Vector2.zero;
         Vector2 cellAnchorMax = Vector2.zero;
-        float offsetX = cellSizeRatio + paddingRatio;
-        float offsetY = paddingRatio;
+        float yMax = origin.y + gridSize * scaledCellSizeRatio.y + gridSize * padding.y;
         
         for (int y = 0, i = 0; y < gridSize; y++)
         {
-            cellAnchorMin.y = y * cellSizeRatio;
-            cellAnchorMax.y = (y + 1) * cellSizeRatio;
-            for (int x = 1; x <= gridSize; x++, i++)
+            float offsetY = padding.y * (y);
+            
+            cellAnchorMax.y = yMax - (y * scaledCellSizeRatio.y) - offsetY;
+            cellAnchorMin.y = yMax - ((y + 1) * scaledCellSizeRatio.y) - offsetY;
+            
+            print($"Min: {cellAnchorMin.y}, Max: {cellAnchorMax.y}");
+            
+            for (int x = 0; x < gridSize; x++, i++)
             {
-                
                 Image img = Instantiate(cellPrefab) as Image;
                 img.color = playerIndex == 0 ? Color.green : Color.red;
                 
                 img.transform.parent = transform;
-                
-                cellAnchorMin.x = x * cellSizeRatio;
-                cellAnchorMax.x = (x + 1) * cellSizeRatio;
+                img.transform.name = $"Cell {i} ({x},{y})";
+
+                float offsetX = origin.x + padding.x * (x + 1);
+
+                cellAnchorMin.x = x * scaledCellSizeRatio.x + offsetX;
+                cellAnchorMax.x = (x + 1) * scaledCellSizeRatio.x + offsetX;
                 
                 img.rectTransform.anchorMin = cellAnchorMin;
                 img.rectTransform.anchorMax = cellAnchorMax;

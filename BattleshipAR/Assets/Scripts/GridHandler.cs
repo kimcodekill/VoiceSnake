@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public class GridHandler : MonoBehaviour
 {
     public PlayerSide sidePrefab;
+    public Image dividerPrefab;
 
     private PlayerSide player;
     
@@ -32,5 +33,13 @@ public class GridHandler : MonoBehaviour
         PlayerSide p1 = Instantiate(sidePrefab) as PlayerSide;
         p1.transform.parent = transform;
         p1.Initialize(1, p1AnchorMin, p1AnchorMax);
+
+        DrawDivider();
+    }
+
+    private void DrawDivider()
+    {
+        Image divider = Instantiate(dividerPrefab) as Image;
+        divider.transform.SetParent(transform, false);
     }
 }
