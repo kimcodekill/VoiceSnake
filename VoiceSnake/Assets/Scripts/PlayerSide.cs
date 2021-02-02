@@ -7,14 +7,16 @@ using UnityEngine.UI;
 [SelectionBase]
 public class PlayerSide : MonoBehaviour
 {
-    public Image cellPrefab;
+    public Cell cellPrefab;
     public RectTransform legendPrefab;
     [Range(0.1f, 1f)]public float cellScale = 1f;
     
-    private const int gridSize = 10;
+    private const int gridSize = 6;
+    
+    public Color Color { get; private set; }
 
     private RectTransform rect;
-    private CellState[] cells;
+    private Cell[] cells;
     private int playerIndex = 0;
     private float width, height;
     private float cellSize;
@@ -22,16 +24,20 @@ public class PlayerSide : MonoBehaviour
     private Vector2 scaledCellSizeRatio;
     private Vector2 padding;
 
+    public int PlayerIndex => playerIndex; 
+
     private string[] legend =
     {
-        "J", "I", "H", "G", "F", "E", "D", "C", "B", "A",  
-        "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"
+        // "J", "I", "H", "G",
+        "F", "E", "D", "C", "B", "A",  
+        "1", "2", "3", "4", "5", "6"
+         //, "7", "8", "9", "10"
     };
-    
 
     public void Initialize(int playerIndex, Vector2 anchorMin, Vector2 anchorMax)
     {
         this.playerIndex = playerIndex;
+        Color = playerIndex == 0 ? Color.green : Color.red;
         rect = GetComponent<RectTransform>();
         Canvas.ForceUpdateCanvases();
         rect.anchorMin = anchorMin;
@@ -41,7 +47,7 @@ public class PlayerSide : MonoBehaviour
     
     private void Start()
     {
-        cells = new CellState[gridSize * gridSize];
+        cells = new Cell[gridSize * gridSize];
         width = rect.rect.width;
         height = rect.rect.height;
         cellSize = width / gridSize;
@@ -49,8 +55,8 @@ public class PlayerSide : MonoBehaviour
         padding = cellSizeRatio * 0.1f;
         scaledCellSizeRatio = cellSizeRatio * cellScale;
 
-        DrawLegend(new Vector2(scaledCellSizeRatio.x , 0));
-        PopulateShipCells(new Vector2(scaledCellSizeRatio.x * 2f + padding.x, 0f));
+        DrawLegend(new Vector2(padding.x , 0));
+        PopulateShipCells(new Vector2(scaledCellSizeRatio.x + padding.x * 2f, 0f));
         
         print($"Player {playerIndex} is ready");
     }
@@ -100,27 +106,35 @@ public class PlayerSide : MonoBehaviour
             cellAnchorMax.y = yMax - (y * scaledCellSizeRatio.y) - offsetY;
             cellAnchorMin.y = yMax - ((y + 1) * scaledCellSizeRatio.y) - offsetY;
             
-            print($"Min: {cellAnchorMin.y}, Max: {cellAnchorMax.y}");
-            
             for (int x = 0; x < gridSize; x++, i++)
             {
-                Image img = Instantiate(cellPrefab) as Image;
-                img.color = playerIndex == 0 ? Color.green : Color.red;
-                
-                img.transform.parent = transform;
-                img.transform.name = $"Cell {i} ({x},{y})";
+                Cell cell = Instantiate(cellPrefab) as Cell;
+                cell.transform.parent = transform;
+                cell.transform.name = $"Cell {i} ({x},{y})";
+                cell.Initialize(new Vector2(x, y), this);
 
                 float offsetX = origin.x + padding.x * (x + 1);
 
                 cellAnchorMin.x = x * scaledCellSizeRatio.x + offsetX;
                 cellAnchorMax.x = (x + 1) * scaledCellSizeRatio.x + offsetX;
+
+                RectTransform cRect = cell.GetComponent<RectTransform>();
+                cRect.anchorMin = cellAnchorMin;
+                cRect.anchorMax = cellAnchorMax;
+                cRect.offsetMax = cRect.offsetMin = Vector2.zero;
                 
-                img.rectTransform.anchorMin = cellAnchorMin;
-                img.rectTransform.anchorMax = cellAnchorMax;
-                img.rectTransform.offsetMax = img.rectTransform.offsetMin = Vector2.zero;
-                
-                cells[i] = CellState.Empty;
+                cells[i] = cell;
             }
         }
+    }
+
+    public void SelectCell(SelectType selectType, int x, int y)
+    {
+        cells[x + y * (gridSize - 1)].Select(selectType);
+    }
+
+    public Rotation[] AllowedRotations(Vector2 gridPos)
+    {
+        return new Rotation[] {Rotation.North, Rotation.East, Rotation.South, Rotation.West};
     }
 }

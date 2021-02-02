@@ -88,6 +88,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c531233fb76741c44ae7eddc70786255, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cellPrefab: {fileID: 4653450312723548124, guid: 8c19f4a1493c4c64e9bdf7987c2569ee, type: 3}
+  cellPrefab: {fileID: 7920621208222196459, guid: 8c19f4a1493c4c64e9bdf7987c2569ee, type: 3}
   legendPrefab: {fileID: 787361686194822953, guid: e0fcaf7dcf4466d49a6b77c039fe0412, type: 3}
-  cellScale: 0.5
+  cellScale: 0.646
