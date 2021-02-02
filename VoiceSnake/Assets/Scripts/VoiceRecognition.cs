@@ -3,16 +3,19 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Windows.Speech;
+using UnityEngine.Windows.Speech; //we cant use windows speech on android :shrug: couldve guessed
 
 public class VoiceRecognition : MonoBehaviour
 {
     private KeywordRecognizer keywordRecognizer;
     private Dictionary<string, Action> actions = new Dictionary<string, Action>();
-    // Start is called before the first frame update
+    
     void Start()
     {
-        actions.Add("help", Help);
+        actions.Add("up", Up);
+        actions.Add("down", Down);
+        actions.Add("left", Left);
+        actions.Add("right", Right);
         
         keywordRecognizer = new KeywordRecognizer(actions.Keys.ToArray());
         keywordRecognizer.OnPhraseRecognized += RecognizedSpeech;
@@ -21,11 +24,12 @@ public class VoiceRecognition : MonoBehaviour
 
     private void RecognizedSpeech(PhraseRecognizedEventArgs speech)
     {
-        actions[speech.text].Invoke();
-    }
+        Debug.Log($"{speech.text} ({speech.confidence})");
+        actions[speech.text].Invoke();  
+    } 
 
-    private void Help()
-    {
-        print("help recognized");
-    }
+    private void Up() => transform.position += Vector3.up;
+    private void Down() => transform.position += Vector3.down;
+    private void Left() => transform.position += Vector3.left;
+    private void Right() => transform.position += Vector3.right;
 }

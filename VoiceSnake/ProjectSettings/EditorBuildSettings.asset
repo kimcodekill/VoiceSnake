@@ -4,6 +4,9 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/Dev/VoiceRecognitionTest.unity
+    guid: c442d4c7771a4b64ea00c86010a404d9
   m_configObjects:
     UnityEditor.XR.ARCore.ARCoreSettings: {fileID: 11400000, guid: f5a81007d1cf6824ab5268f1aad1f806, type: 2}
