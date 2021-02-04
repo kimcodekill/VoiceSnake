@@ -12,7 +12,7 @@ public class GameHandler : MonoBehaviour
     
     private static int currPlayer;
     private static GameState gameState;
-    private static Cell selectedCell;
+    private static ShipCell _selectedShipCell;
     
     private PlayerSide[] sides;
     
@@ -24,13 +24,13 @@ public class GameHandler : MonoBehaviour
     public static GameState CurrentState => gameState;
     public static int CurrentPlayer => currPlayer;
 
-    public static Cell SelectedCell
+    public static ShipCell SelectedShipCell
     {
-        get => selectedCell;
+        get => _selectedShipCell;
         set
         {
-            if(selectedCell != null) selectedCell.Select(SelectType.None);
-            selectedCell = value;
+            if(_selectedShipCell != null) _selectedShipCell.Select(SelectType.None);
+            _selectedShipCell = value;
         }
     }
 

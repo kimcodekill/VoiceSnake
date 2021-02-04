@@ -5,9 +5,9 @@ using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Cell : MonoBehaviour
+public class ShipCell : MonoBehaviour
 {
-    public CellState state = CellState.Empty;
+    public ShipCellState state = ShipCellState.Empty;
     public Vector2 gridPos;
 
     //replace with button?
@@ -50,7 +50,7 @@ public class Cell : MonoBehaviour
     {
         if (GameHandler.CurrentPlayer == playerSide.PlayerIndex)
         {
-            GameHandler.SelectedCell = this;
+            GameHandler.SelectedShipCell = this;
 
             if (GameHandler.CurrentState == GameState.Setup)
             {

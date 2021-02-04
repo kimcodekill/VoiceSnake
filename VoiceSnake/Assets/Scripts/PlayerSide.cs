@@ -7,7 +7,7 @@ using UnityEngine.UI;
 [SelectionBase]
 public class PlayerSide : MonoBehaviour
 {
-    public Cell cellPrefab;
+    public ShipCell shipCellPrefab;
     public RectTransform legendPrefab;
     [Range(0.1f, 1f)]public float cellScale = 1f;
     
@@ -16,7 +16,7 @@ public class PlayerSide : MonoBehaviour
     public Color Color { get; private set; }
 
     private RectTransform rect;
-    private Cell[] cells;
+    private ShipCell[] cells;
     private int playerIndex = 0;
     private float width, height;
     private float cellSize;
@@ -47,7 +47,7 @@ public class PlayerSide : MonoBehaviour
     
     private void Start()
     {
-        cells = new Cell[gridSize * gridSize];
+        cells = new ShipCell[gridSize * gridSize];
         width = rect.rect.width;
         height = rect.rect.height;
         cellSize = width / gridSize;
@@ -108,22 +108,22 @@ public class PlayerSide : MonoBehaviour
             
             for (int x = 0; x < gridSize; x++, i++)
             {
-                Cell cell = Instantiate(cellPrefab) as Cell;
-                cell.transform.parent = transform;
-                cell.transform.name = $"Cell {i} ({x},{y})";
-                cell.Initialize(new Vector2(x, y), this);
+                ShipCell shipCell = Instantiate(shipCellPrefab) as ShipCell;
+                shipCell.transform.parent = transform;
+                shipCell.transform.name = $"Cell {i} ({x},{y})";
+                shipCell.Initialize(new Vector2(x, y), this);
 
                 float offsetX = origin.x + padding.x * (x + 1);
 
                 cellAnchorMin.x = x * scaledCellSizeRatio.x + offsetX;
                 cellAnchorMax.x = (x + 1) * scaledCellSizeRatio.x + offsetX;
 
-                RectTransform cRect = cell.GetComponent<RectTransform>();
+                RectTransform cRect = shipCell.GetComponent<RectTransform>();
                 cRect.anchorMin = cellAnchorMin;
                 cRect.anchorMax = cellAnchorMax;
                 cRect.offsetMax = cRect.offsetMin = Vector2.zero;
                 
-                cells[i] = cell;
+                cells[i] = shipCell;
             }
         }
     }
