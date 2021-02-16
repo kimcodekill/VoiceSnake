@@ -9,6 +9,7 @@ using static AndroidBridgeUtils;
 public class VoiceRecognition : MonoBehaviour, IAndroidBridge
 {
     private KeywordRecognizer keywordRecognizer;
+    private DictationRecognizer dictationRecognizer;
     private Dictionary<string, Action> actions = new Dictionary<string, Action>();
     
     void Start()
@@ -19,9 +20,43 @@ public class VoiceRecognition : MonoBehaviour, IAndroidBridge
         actions.Add("left", Left);
         actions.Add("right", Right);
         
-        keywordRecognizer = new KeywordRecognizer(actions.Keys.ToArray());
-        keywordRecognizer.OnPhraseRecognized += RecognizedSpeech;
-        keywordRecognizer.Start();
+        // cannot run multiple recognizers at once
+        // keywordRecognizer = new KeywordRecognizer(actions.Keys.ToArray());
+        // keywordRecognizer.OnPhraseRecognized += RecognizedSpeech;
+        // keywordRecognizer.Start();
+        
+        dictationRecognizer = new DictationRecognizer();
+        
+        dictationRecognizer.DictationResult += (text, confidence) =>
+        {
+            Debug.LogFormat("Dictation result: {0}", text);
+            print(actions.TryGetValue(text, out Action action));
+        };
+
+        dictationRecognizer.DictationHypothesis += (text) =>
+        {
+            if(actions.TryGetValue(text, out Action action))
+                action();  
+        };
+
+        dictationRecognizer.DictationComplete += (completionCause) =>
+        {
+            // if (completionCause == DictationCompletionCause.TimeoutExceeded)
+            // {
+            //     print("restarting dictation");
+            // }
+            // else if (completionCause != DictationCompletionCause.Complete)
+            //     Debug.LogErrorFormat("Dictation completed unsuccessfully: {0}.", completionCause);
+            //
+            dictationRecognizer.Stop();
+            dictationRecognizer.Start();
+        };
+
+        dictationRecognizer.DictationError += (error, hresult) =>
+        {
+            Debug.LogErrorFormat("Dictation error: {0}; HResult = {1}.", error, hresult);
+        };
+        dictationRecognizer.Start();
     #else
         SetContinuousListening(true);
         StartListening();
