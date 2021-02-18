@@ -5,6 +5,8 @@ using System.ComponentModel;
 using System.Configuration;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
@@ -22,9 +24,10 @@ public class GridHandler : MonoBehaviour
     private bool gameOver = false;
     
     public Vector2 GridSize { get; private set; }
+    public Snake GetSnake() => snake;
     
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         Initialize();
         snake = new Snake(new Vector2(GridSize.x / 2, GridSize.y / 2), this);
@@ -37,12 +40,12 @@ public class GridHandler : MonoBehaviour
 
     private void Update()
     {
-        float hor = Input.GetAxisRaw("Horizontal");
-        float vert = Input.GetAxisRaw("Vertical");
-        if (hor != 0)
-            snake.MoveDir = Vector2.right * hor;
-        else if (vert != 0)
-            snake.MoveDir = Vector2.down * vert;
+        // float hor = Input.GetAxisRaw("Horizontal");
+        // float vert = Input.GetAxisRaw("Vertical");
+        // if (hor != 0)
+        //     snake.MoveDir = Vector2.right * hor;
+        // else if (vert != 0)
+        //     snake.MoveDir = Vector2.down * vert;
     }
 
     private void FixedUpdate()

@@ -17,8 +17,11 @@ public class Snake
         get => moveDir;
         set
         {
-            if (value != MoveDir && value != MoveDir * -1f)
-                moveDir = value;
+            if (value.magnitude <= 1f)
+            {
+                if (value != MoveDir && value != MoveDir * -1f)
+                    moveDir = value;
+            }
         }
     }
 
