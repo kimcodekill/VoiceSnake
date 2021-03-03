@@ -52,7 +52,8 @@ public class Snake
         }
         else if (newCell.State == CellState.Snake)
             return false; //player hit body, death
-
+        
+        //todo because we do the body after the head, the head can hit the tip of the tail when it shouldnt
         if (body.Count > 0)
         {
             handler.GetCell(body.Last()).State = CellState.Empty;

@@ -15,7 +15,8 @@ public class GridHandler : MonoBehaviour
     public Cell cell;
     public float snakeMoveDelay = 1f;
     [Range(1, 10)] public int scale;
-    
+
+    private DataCollector dataCollector;
     private GridLayoutGroup gridLayout;
     private Vector2 cellSize;
     private Cell[,] cells;
@@ -57,12 +58,16 @@ public class GridHandler : MonoBehaviour
             if (snake.Move())
                 snakeMoveStart = Time.time;
             else
+            {
                 gameOver = true;
+                DataCollector.Save();
+            }
         }
     }
 
     private void Initialize()
     {
+        DataCollector.CreateDataSheet();
         gridLayout = GetComponent<GridLayoutGroup>();
         GridSize = AspectRatio.GetAspectRatio(Screen.width, Screen.height) * scale;
         cells = new Cell[(int)GridSize.x, (int) GridSize.y];
@@ -88,7 +93,8 @@ public class GridHandler : MonoBehaviour
                 cells[x, y].gameObject.name = $"Cell ({x}, {y})";
             }
         }
-            
+
+        dataCollector = new DataCollector();
     }
 
     private Cell PlaceApple()
