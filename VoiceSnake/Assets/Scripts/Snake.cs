@@ -12,6 +12,8 @@ public class Snake
     private Vector2 moveMax;
     private Vector2 moveDir;
 
+    public GridHandler Handler => handler;
+
     public Vector2 MoveDir
     { 
         get => moveDir;

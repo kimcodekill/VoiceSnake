@@ -14,7 +14,7 @@ public class GridHandler : MonoBehaviour
 {
     public Cell cell;
     public float snakeMoveDelay = 1f;
-    [Range(1, 10)] public int scale;
+    [Range(0.1f, 1)] public float scale;
 
     private DataCollector dataCollector;
     private GridLayoutGroup gridLayout;
@@ -23,7 +23,12 @@ public class GridHandler : MonoBehaviour
     private Snake snake;
     private float snakeMoveStart;
     private bool gameOver = false;
-    
+    private int collectedApples = 0;
+
+    public int CollectedApples => collectedApples;
+
+    public float StepDelay => snakeMoveDelay;
+
     public Vector2 GridSize { get; private set; }
     public Snake GetSnake() => snake;
     
@@ -60,16 +65,14 @@ public class GridHandler : MonoBehaviour
             else
             {
                 gameOver = true;
-                DataCollector.Save();
             }
         }
     }
 
     private void Initialize()
     {
-        DataCollector.CreateDataSheet();
         gridLayout = GetComponent<GridLayoutGroup>();
-        GridSize = AspectRatio.GetAspectRatio(Screen.width, Screen.height) * scale;
+        GridSize = AspectRatio.GetAspectRatio(Screen.width, Screen.height);
         cells = new Cell[(int)GridSize.x, (int) GridSize.y];
         
         Canvas.ForceUpdateCanvases();
@@ -113,6 +116,7 @@ public class GridHandler : MonoBehaviour
 
     public void EatApple()
     {
+        collectedApples++;
         snakeMoveDelay = Mathf.Max(0f, snakeMoveDelay - Time.deltaTime); //temp
         PlaceApple();
     }

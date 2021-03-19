@@ -42,12 +42,17 @@ public class VoiceSnakeController : MonoBehaviour
             // print($"Endtime: {DateTime.Now}");
             TimeSpan delta = (DateTime.Now - args.phraseStartTime);
             TimeSpan netTime = delta - args.phraseDuration;
-            print($"Command: {args.text}");
-            print($"(delta: {delta.TotalMilliseconds}ms)");
-            print($"(netTime: {netTime.TotalMilliseconds}ms)");
-            print($"(phraseDuration: {args.phraseDuration.TotalMilliseconds}ms)");
+            // print($"Command: {args.text}");
+            // print($"(delta: {delta.TotalMilliseconds}ms)");
+            // print($"(netTime: {netTime.TotalMilliseconds}ms)");
+            // print($"(phraseDuration: {args.phraseDuration.TotalMilliseconds}ms)");
             actions[args.text].Invoke();
-            DataCollector.AddDataPoint(new DataPoint("Command: " + args.text, (float)netTime.TotalMilliseconds));
+            DataCollector.AddDataPoint(new DataPoint(
+                EventType.Command, 
+                args.text, 
+                snake.Handler.CollectedApples,
+                snake.Handler.StepDelay,
+                netTime.TotalMilliseconds));
         };
         
         keywordRecognizer.Start();
@@ -102,8 +107,8 @@ public class VoiceSnakeController : MonoBehaviour
         dictationRecognizer.Start();
     }
 
-    private void Up() => snake.MoveDir = Vector2.down;
-    private void Down() => snake.MoveDir = Vector3.up; //these are flipped for some reason..
-    private void Left() => snake.MoveDir = Vector3.left;
-    private void Right() => snake.MoveDir = Vector3.right;
+    private void Up() => snake.MoveDir = Vector2.down; // up and down are flipped because grid (0,0) is top left 
+    private void Down() => snake.MoveDir = Vector2.up; 
+    private void Left() => snake.MoveDir = Vector2.left;
+    private void Right() => snake.MoveDir = Vector2.right;
 }
