@@ -111,4 +111,10 @@ public class VoiceSnakeController : MonoBehaviour
     private void Down() => snake.MoveDir = Vector2.up; 
     private void Left() => snake.MoveDir = Vector2.left;
     private void Right() => snake.MoveDir = Vector2.right;
+
+    private void OnDestroy()
+    {
+        keywordRecognizer.Stop();
+        keywordRecognizer.Dispose();
+    }
 }

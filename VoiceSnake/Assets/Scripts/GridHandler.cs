@@ -6,7 +6,6 @@ using System.Configuration;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
@@ -15,6 +14,7 @@ public class GridHandler : MonoBehaviour
     public Cell cell;
     public float snakeMoveDelay = 1f;
     [Range(0.1f, 1)] public float scale;
+    [SerializeField] private EndPanel endPanel;
 
     private DataCollector dataCollector;
     private GridLayoutGroup gridLayout;
@@ -46,12 +46,9 @@ public class GridHandler : MonoBehaviour
 
     private void Update()
     {
-        // float hor = Input.GetAxisRaw("Horizontal");
-        // float vert = Input.GetAxisRaw("Vertical");
-        // if (hor != 0)
-        //     snake.MoveDir = Vector2.right * hor;
-        // else if (vert != 0)
-        //     snake.MoveDir = Vector2.down * vert;
+        //debug
+        if(!gameOver && Input.GetKeyDown(KeyCode.Q))
+            GameOver();
     }
 
     private void FixedUpdate()
@@ -64,9 +61,15 @@ public class GridHandler : MonoBehaviour
                 snakeMoveStart = Time.time;
             else
             {
-                gameOver = true;
+                GameOver();
             }
         }
+    }
+
+    private void GameOver()
+    {
+        endPanel.gameObject.SetActive(true);
+        gameOver = true;
     }
 
     private void Initialize()
