@@ -12,7 +12,16 @@ using Random = UnityEngine.Random;
 public class GridHandler : MonoBehaviour
 {
     public Cell cell;
+
+    [Tooltip("Steps per second")]
     public float snakeMoveDelay = 1f;
+
+    [Tooltip("Snake won't move faster than this")]
+    public float minimumMoveDelay = .1f;
+
+    [Tooltip("The reduction of speed each apple eaten")]
+    public float moveDelayDecrement = .05f;
+
     [Range(0.1f, 1)] public float scale;
     [SerializeField] private EndPanel endPanel;
 
@@ -120,7 +129,10 @@ public class GridHandler : MonoBehaviour
     public void EatApple()
     {
         collectedApples++;
-        snakeMoveDelay = Mathf.Max(0f, snakeMoveDelay - Time.deltaTime); //temp
+
+        // MoveDelay som börjar på 1 och minskar .05 varje äpple kändes lagom. Skulle dock vilja kunna minska storleken på spelplanen.
+        snakeMoveDelay = Mathf.Max(minimumMoveDelay, snakeMoveDelay - moveDelayDecrement);
+
         PlaceApple();
     }
 
