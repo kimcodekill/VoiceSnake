@@ -49,6 +49,13 @@ public class DataCollector
         if (!Directory.Exists(root)) Directory.CreateDirectory(root);
         
         string fileName = root + $"{dataSheet.session.ToString()}_{dataSheet.pseudonym}.xml";
+
+        // Skapar nytt filnamn för varje runda just nu. Men kanske bättre om vi kan få alla runder i samma fil? Du fixar nog det bättre än mig dock.
+        string tmpFileName = fileName;
+        for (int i = 1; File.Exists(tmpFileName); i++)
+            tmpFileName = root + $"{dataSheet.session.ToString()}_{dataSheet.pseudonym}_R{i}.xml";
+        fileName = tmpFileName;
+
         Debug.Log(fileName);
         
         using (Stream stream = new FileStream(fileName, FileMode.Create))

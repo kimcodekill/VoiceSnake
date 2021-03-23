@@ -15,7 +15,7 @@ public class StartPanel : MonoBehaviour
 
     public void OnStart()
     {
-        DataCollector.CreateDataSheet(inputField.text, (Session) sessionDropdown.value);
+        DataCollector.CreateDataSheet(inputField.text, (Session)(sessionDropdown.value - 1));
         grid.SetActive(true);
         gameObject.SetActive(false);
     }
