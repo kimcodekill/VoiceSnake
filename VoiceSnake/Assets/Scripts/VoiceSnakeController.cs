@@ -51,7 +51,10 @@ public class VoiceSnakeController : MonoBehaviour
                 args.text, 
                 snake.Handler.CollectedApples,
                 snake.Handler.StepDelay,
-                netTime.TotalMilliseconds));
+                netTime.TotalMilliseconds,
+                args.phraseDuration.TotalMilliseconds,
+                delta.TotalMilliseconds,
+                -1f));
 
             actions[args.text].Invoke();
         };

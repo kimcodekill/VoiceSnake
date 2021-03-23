@@ -33,10 +33,13 @@ public class GridHandler : MonoBehaviour
     private float snakeMoveStart;
     private bool gameOver = false;
     private int collectedApples = 0;
+    private float startPlayTime;
 
     public int CollectedApples => collectedApples;
 
     public float StepDelay => snakeMoveDelay;
+
+    public float StartPlayTime => startPlayTime;
 
     public Vector2 GridSize { get; private set; }
     public Snake GetSnake() => snake;
@@ -64,6 +67,10 @@ public class GridHandler : MonoBehaviour
     {
         Vector2 prevPos = snake.head;
 
+        // Sparar ner tiden för strax innan vi startar i suppose
+        if (snake.MoveDir.magnitude == 0f)
+            startPlayTime = Time.realtimeSinceStartup;
+
         if (!gameOver && snakeMoveDelay < Time.time - snakeMoveStart)
         {
             if (snake.Move())
@@ -77,6 +84,16 @@ public class GridHandler : MonoBehaviour
 
     private void GameOver()
     {
+        DataCollector.AddDataPoint(new DataPoint(
+                EventType.PlayerState,
+                "death",
+                snake.Handler.CollectedApples,
+                snake.Handler.StepDelay,
+                -1d,
+                -1d,
+                -1d,
+                Time.realtimeSinceStartup - startPlayTime));
+
         endPanel.gameObject.SetActive(true);
         gameOver = true;
     }

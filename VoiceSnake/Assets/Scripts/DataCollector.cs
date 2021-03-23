@@ -66,7 +66,7 @@ public class DataCollector
             // foreach (DataPoint d in dataPoints)
             // {
             //     xml.Serialize(stream, d);
-            //     Debug.Log($"EventType: {d.eventType.ToString()} Event: {d.eventName}, Delay: {d.inputDelay}");
+            //     Debug.Log($"EventType: {d.eventType.ToString()} Event: {d.eventName}, Delay: {d.systemResponseTime}");
             // }
         }
     }
@@ -80,16 +80,24 @@ public struct DataPoint
     public string eventName;
     public int collectedFruits;
     public float stepDelay; //ms
-    public double inputDelay; //ms
+    public double systemResponseTime; //ms
+    public double speechLength; //ms
+    public double totalInteractionTime; //ms
+    public float playTime;
 
-    public DataPoint(EventType eventType, string eventName, int collectedFruits, float stepDelay, double inputDelay)
+    public DataPoint(EventType eventType, string eventName, int collectedFruits, float stepDelay,
+        double systemResponseTime, double speechLength, double totalInteractionTime, float playTime)
     {
         this.eventType = eventType;
         this.eventName = eventName;
         this.collectedFruits = collectedFruits;
         this.stepDelay = stepDelay;
-        this.inputDelay = inputDelay;
+        this.systemResponseTime = systemResponseTime;
+        this.speechLength = speechLength;
+        this.totalInteractionTime = totalInteractionTime;
+        this.playTime = playTime;
     }
+
 }
 
 [Serializable]
