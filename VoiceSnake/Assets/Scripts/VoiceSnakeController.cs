@@ -46,13 +46,14 @@ public class VoiceSnakeController : MonoBehaviour
             // print($"(delta: {delta.TotalMilliseconds}ms)");
             // print($"(netTime: {netTime.TotalMilliseconds}ms)");
             // print($"(phraseDuration: {args.phraseDuration.TotalMilliseconds}ms)");
-            actions[args.text].Invoke();
             DataCollector.AddDataPoint(new DataPoint(
                 EventType.Command, 
                 args.text, 
                 snake.Handler.CollectedApples,
                 snake.Handler.StepDelay,
                 netTime.TotalMilliseconds));
+
+            actions[args.text].Invoke();
         };
         
         keywordRecognizer.Start();
