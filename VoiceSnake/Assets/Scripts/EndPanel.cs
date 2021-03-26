@@ -15,9 +15,14 @@ public class EndPanel : MonoBehaviour
         appleLabel.text = gridHandler.CollectedApples.ToString();
     }
 
-    public void Restart()
+    public void EndSession()
     {
         DataCollector.Save();
         SceneManager.LoadScene(0);
+    }
+
+    public void Restart()
+    {
+        gridHandler.Restart();
     }
 }

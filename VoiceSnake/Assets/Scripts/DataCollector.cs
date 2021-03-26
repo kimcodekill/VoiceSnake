@@ -8,7 +8,7 @@ using System.Xml.Serialization;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 
-public class DataCollector
+public static class DataCollector
 {
     private static DataSheet dataSheet;
 
@@ -51,10 +51,10 @@ public class DataCollector
         string fileName = root + $"{dataSheet.session.ToString()}_{dataSheet.pseudonym}_R1.xml";
 
         // Skapar nytt filnamn för varje runda just nu. Men kanske bättre om vi kan få alla runder i samma fil? Du fixar nog det bättre än mig dock.
-        string tmpFileName = fileName;
-        for (int i = 2; File.Exists(tmpFileName); i++)
-            tmpFileName = root + $"{dataSheet.session.ToString()}_{dataSheet.pseudonym}_R{i}.xml";
-        fileName = tmpFileName;
+        // string tmpFileName = fileName;
+        // for (int i = 2; File.Exists(tmpFileName); i++)
+        //     tmpFileName = root + $"{dataSheet.session.ToString()}_{dataSheet.pseudonym}_R{i}.xml";
+        // fileName = tmpFileName;
 
         Debug.Log(fileName);
         
