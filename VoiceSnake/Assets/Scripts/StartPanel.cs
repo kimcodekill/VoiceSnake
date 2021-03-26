@@ -41,7 +41,7 @@ public class StartPanel : MonoBehaviour
 
         commandKeywords.Add("down", new List<string>());
         commandKeywords["down"].Add("down");
-        commandKeywords["down"].Add("owl");
+        commandKeywords["down"].Add("done");
         commandKeywords["down"].Add("no");
         commandKeywords["down"].Add("dawn");
 
@@ -119,7 +119,10 @@ public class StartPanel : MonoBehaviour
     {
         calibrationMenu.SetActive(false);
         mainMenu.SetActive(true);
+        dictationRecognizer.Stop();
         dictationRecognizer.Dispose();
+        startCalibrateButton.interactable = true;
+        startCalibrateButton.GetComponentInChildren<Text>().text = "Start Calibrate";
     }
 
     public void OnStartCalibrateButton()
@@ -161,9 +164,4 @@ public class StartPanel : MonoBehaviour
         }
     }
 
-    private void OnDestroy()
-    {
-        dictationRecognizer.Stop();
-        dictationRecognizer.Dispose();
-    }
 }

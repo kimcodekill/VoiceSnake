@@ -34,7 +34,7 @@ public class GridHandler : MonoBehaviour
     private float snakeMoveStart;
     private bool gameOver = false;
     private int collectedApples = 0;
-    private float startPlayTime;
+    private float startRoundTime;
 
     public Vector2 GridSize { get; private set; }
     
@@ -42,7 +42,7 @@ public class GridHandler : MonoBehaviour
 
     public float StepDelay => snakeMoveDelay;
 
-    public float StartPlayTime => startPlayTime;
+    public float StartRoundTime => startRoundTime;
     public Snake GetSnake() => snake;
     
     // Start is called before the first frame update
@@ -66,7 +66,7 @@ public class GridHandler : MonoBehaviour
 
         // Sparar ner tiden för strax innan vi startar i suppose
         if (snake.MoveDir.magnitude == 0f)
-            startPlayTime = Time.realtimeSinceStartup;
+            startRoundTime = Time.realtimeSinceStartup;
 
         if (!gameOver && snakeMoveDelay < Time.time - snakeMoveStart)
         {
@@ -91,7 +91,7 @@ public class GridHandler : MonoBehaviour
                 -1d,
                 -1d,
                 -1d,
-                Time.realtimeSinceStartup - startPlayTime));
+                Time.realtimeSinceStartup - startRoundTime));
 
         endPanel.gameObject.SetActive(true);
         gameOver = true;
@@ -102,6 +102,7 @@ public class GridHandler : MonoBehaviour
         gameOver = false;
         snakeMoveDelay = 1f;
         collectedApples = 0;
+        startRoundTime = Time.realtimeSinceStartup;
         endPanel.gameObject.SetActive(false);
         ClearGrid();
         SetupActors();
