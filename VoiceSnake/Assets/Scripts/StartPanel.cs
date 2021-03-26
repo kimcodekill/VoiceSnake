@@ -31,6 +31,32 @@ public class StartPanel : MonoBehaviour
 
     public Toggle UseCalibratedKeywords { get => useCalibratedKeywords; private set { } }
 
+    private void Start()
+    {
+        commandKeywords.Add("up", new List<string>());
+        commandKeywords["up"].Add("up");
+        commandKeywords["up"].Add("hope");
+        commandKeywords["up"].Add("pop");
+        commandKeywords["up"].Add("app");
+
+        commandKeywords.Add("down", new List<string>());
+        commandKeywords["down"].Add("down");
+        commandKeywords["down"].Add("owl");
+        commandKeywords["down"].Add("no");
+        commandKeywords["down"].Add("dawn");
+
+        commandKeywords.Add("left", new List<string>());
+        commandKeywords["left"].Add("left");
+        commandKeywords["left"].Add("theft");
+        commandKeywords["left"].Add("heft");
+        commandKeywords["left"].Add("lift");
+
+        commandKeywords.Add("right", new List<string>());
+        commandKeywords["right"].Add("right");
+        commandKeywords["right"].Add("fight");
+        commandKeywords["right"].Add("light");
+        commandKeywords["right"].Add("rate");
+    }
     public void OnStart()
     {
         DataCollector.CreateDataSheet(inputField.text, (Session)(sessionDropdown.value - 1));
@@ -52,17 +78,8 @@ public class StartPanel : MonoBehaviour
 
         dictationRecognizer.DictationResult += (text, confidence) =>
         {
-            Debug.LogFormat("Dictation result: {0}", text);
+            //Debug.LogFormat("Dictation result: {0}", text);
 
-            // Lägg till i vald keyword lista
-            //if (chosenCommand == "up")
-            //{
-            //   upKeywords.Add(text);
-            //   StringBuilder stringBuilder = new StringBuilder(9999);
-            //   foreach (string keyword in upKeywords)
-            //       stringBuilder.Append(keyword + " ");
-            //   textField.text = stringBuilder.ToString();
-            //}
             commandKeywords[chosenCommand].Add(text);
 
             textField.text = "";
@@ -81,17 +98,19 @@ public class StartPanel : MonoBehaviour
 
         dictationRecognizer.DictationHypothesis += (text) =>
         {
-            print($"Hypothesis: {text}");
+            //print($"Hypothesis: {text}");
         };
 
         dictationRecognizer.DictationComplete += (completionCause) =>
         {
-            print(completionCause);
+            dictationRecognizer.Stop();
+            startCalibrateButton.interactable = true;
+            startCalibrateButton.GetComponentInChildren<Text>().text = "Start Calibrate";
         };
 
         dictationRecognizer.DictationError += (error, hresult) =>
         {
-            Debug.LogErrorFormat("Dictation error: {0}; HResult = {1}.", error, hresult);
+            //Debug.LogErrorFormat("Dictation error: {0}; HResult = {1}.", error, hresult);
             textField.text = $"Dictation error: {error}; HResult = {hresult}. ";
         };
     }
@@ -126,9 +145,20 @@ public class StartPanel : MonoBehaviour
         else
             chosenCommand = "";
 
-        if (chosenCommand != "" && !commandKeywords.ContainsKey(chosenCommand))
-            commandKeywords.Add(chosenCommand, new List<string>());
-
+        if (chosenCommand == "")
+        {
+            textField.text = "Choose command in dropdown above";
+        } else 
+        { 
+            textField.text = "";
+            int count = 0;
+            foreach (string keyword in commandKeywords[chosenCommand])
+            {
+                count++;
+                textField.text += keyword + " ";
+            }
+            textField.text += "\nTOTAL NO. OF KEYWORDS = " + count;
+        }
     }
 
     private void OnDestroy()

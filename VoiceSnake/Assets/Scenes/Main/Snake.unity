@@ -593,9 +593,21 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 237219967}
     m_Modifications:
+    - target: {fileID: 92430478, guid: 38b3124316cd0914f9174b516c2b8196, type: 3}
+      propertyPath: m_Text
+      value: New Round
+      objectReference: {fileID: 0}
+    - target: {fileID: 738206907, guid: 38b3124316cd0914f9174b516c2b8196, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 230
+      objectReference: {fileID: 0}
     - target: {fileID: 4716842041716936452, guid: 38b3124316cd0914f9174b516c2b8196, type: 3}
       propertyPath: m_Name
       value: EndPanel
+      objectReference: {fileID: 0}
+    - target: {fileID: 4716842041716936452, guid: 38b3124316cd0914f9174b516c2b8196, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4716842041716936453, guid: 38b3124316cd0914f9174b516c2b8196, type: 3}
       propertyPath: m_LocalPosition.x
