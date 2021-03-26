@@ -22,8 +22,11 @@ public class StartPanel : MonoBehaviour
     [SerializeField] private GameObject grid;
     [Header("Stuff for calibration ")]
     private DictationRecognizer dictationRecognizer;
-    private Dictionary<string, string> commandKeywords = new Dictionary<string, string>();
-    private string chosenCommand;
+    private Dictionary<string, List<string>> commandKeywords = new Dictionary<string, List<string>>();
+
+    private string chosenCommand = "";
+
+    public Dictionary<string, List<string>> CommandKeywords { get => commandKeywords; set => commandKeywords = value; }
 
     public void OnStart()
     {
@@ -49,11 +52,28 @@ public class StartPanel : MonoBehaviour
             Debug.LogFormat("Dictation result: {0}", text);
 
             // Lägg till i vald keyword lista
-            commandKeywords.Add(chosenCommand, text);
+            //if (chosenCommand == "up")
+            //{
+            //   upKeywords.Add(text);
+            //   StringBuilder stringBuilder = new StringBuilder(9999);
+            //   foreach (string keyword in upKeywords)
+            //       stringBuilder.Append(keyword + " ");
+            //   textField.text = stringBuilder.ToString();
+            //}
+            commandKeywords[chosenCommand].Add(text);
 
-            if (commandKeywords.ContainsKey(chosenCommand))
-                textField.text = commandKeywords[chosenCommand];
+            textField.text = "";
+            int count = 0;
+            foreach (string keyword in commandKeywords[chosenCommand])
+            {
+                count++;
+                textField.text += keyword + " ";
+            }
+            textField.text += "\nTOTAL NO. OF KEYWORDS = " + count;
 
+            dictationRecognizer.Stop();
+            startCalibrateButton.interactable = true;
+            startCalibrateButton.GetComponentInChildren<Text>().text = "Start Calibrate";
         };
 
         dictationRecognizer.DictationHypothesis += (text) =>
@@ -64,8 +84,6 @@ public class StartPanel : MonoBehaviour
         dictationRecognizer.DictationComplete += (completionCause) =>
         {
             print(completionCause);
-            dictationRecognizer.Stop();
-            startCalibrateButton.interactable = true;
         };
 
         dictationRecognizer.DictationError += (error, hresult) =>
@@ -84,10 +102,11 @@ public class StartPanel : MonoBehaviour
 
     public void OnStartCalibrateButton()
     {
-        if (chosenCommand == null)
+        if (chosenCommand == "")
             return;
         dictationRecognizer.Start();
         startCalibrateButton.interactable = false;
+        startCalibrateButton.GetComponentInChildren<Text>().text = "Listening..";
     }
 
     public void OnCommandDropdownChange()
@@ -101,10 +120,15 @@ public class StartPanel : MonoBehaviour
         else if ((commandsDropdown.value - 1) == 3)
             chosenCommand = "right";
         else
-            chosenCommand = null;
+            chosenCommand = "";
 
-        if (commandKeywords.ContainsKey(chosenCommand))
-            textField.text = commandKeywords[chosenCommand];
+        if (chosenCommand != "" && !commandKeywords.ContainsKey(chosenCommand))
+            commandKeywords.Add(chosenCommand, new List<string>());
+
+        //if (chosenCommand != "" && commandKeywords.ContainsKey(chosenCommand))
+        //  textField.text = commandKeywords[chosenCommand];
+
+        print($"chosenCommand: {chosenCommand}");
     }
 
     private void OnDestroy()

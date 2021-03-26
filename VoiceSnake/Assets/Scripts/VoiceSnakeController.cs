@@ -7,10 +7,12 @@ public class VoiceSnakeController : MonoBehaviour
 {
     [SerializeField] private ConfidenceLevel minimumConfidenceLevel = ConfidenceLevel.Medium;
     [SerializeField] private bool useDictationRecognizer = false;
+    [SerializeField] private StartPanel startPanel;
     private Snake snake;
     private DictationRecognizer dictationRecognizer;
     private KeywordRecognizer keywordRecognizer;
     private Dictionary<string, Action> actions = new Dictionary<string, Action>();
+    private Dictionary<List<string>, Action> actions2 = new Dictionary<List<string>, Action>();
 
     private string[] keywords = { "up", "down", "left", "right"};
 
@@ -20,7 +22,12 @@ public class VoiceSnakeController : MonoBehaviour
     void Start()
     {
         snake = GetComponent<GridHandler>().GetSnake();
-        
+
+        actions2.Add(startPanel.CommandKeywords["up"], Up);
+        actions2.Add(startPanel.CommandKeywords["down"], Down);
+        actions2.Add(startPanel.CommandKeywords["left"], Left);
+        actions2.Add(startPanel.CommandKeywords["right"], Right);
+
         actions.Add("up", Up);
         actions.Add("down", Down);
         actions.Add("left", Left);
@@ -56,7 +63,21 @@ public class VoiceSnakeController : MonoBehaviour
                 delta.TotalMilliseconds,
                 -1f));
 
-            actions[args.text].Invoke();
+            //actions[args.text].Invoke();
+
+            bool found = false;
+            foreach (var listOfKeywords in actions2.Keys)
+            {
+                foreach (string keyword in listOfKeywords)
+                {
+                    if (keyword == args.text && !found)
+                    {
+                        actions2[listOfKeywords].Invoke();
+                        found = true;
+                        break;
+                    }
+                }
+            }
         };
         
         keywordRecognizer.Start();
