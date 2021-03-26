@@ -1,17 +1,29 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Windows.Speech;
 
 public class StartPanel : MonoBehaviour
 {
-    [Header("Inputs")]
+    [Header("Menus")]
+    [SerializeField] private GameObject mainMenu;
+    [SerializeField] private GameObject calibrationMenu;
+    [Header("Main Menu Inputs")]
     [SerializeField] private InputField inputField;
     [SerializeField] private Dropdown sessionDropdown;
     [SerializeField] private Button startButton;
+    [SerializeField] private Button calibrationMenuButton;
+    [Header("Calibration Menu Inputs")]
+    [SerializeField] private Dropdown commandsDropdown;
+    [SerializeField] private Button startCalibrateButton;
+    [SerializeField] private Button calibrationBackButton;
+    [SerializeField] private Text textField;
     [Header("Game")] 
-    [SerializeField] private GameObject grid; 
+    [SerializeField] private GameObject grid;
+    [Header("Stuff for calibration ")]
+    private DictationRecognizer dictationRecognizer;
+    private Dictionary<string, string> commandKeywords = new Dictionary<string, string>();
+    private string chosenCommand;
 
     public void OnStart()
     {
@@ -23,5 +35,81 @@ public class StartPanel : MonoBehaviour
     private void Update()
     {
         startButton.interactable = (inputField.text.Length > 0 && (sessionDropdown.value - 1) != -1);
+    }
+
+    public void OnCalibrationMenuButton()
+    {
+        calibrationMenu.SetActive(true);
+        mainMenu.SetActive(false);
+
+        dictationRecognizer = new DictationRecognizer(ConfidenceLevel.Low);
+
+        dictationRecognizer.DictationResult += (text, confidence) =>
+        {
+            Debug.LogFormat("Dictation result: {0}", text);
+
+            // Lägg till i vald keyword lista
+            commandKeywords.Add(chosenCommand, text);
+
+            if (commandKeywords.ContainsKey(chosenCommand))
+                textField.text = commandKeywords[chosenCommand];
+
+        };
+
+        dictationRecognizer.DictationHypothesis += (text) =>
+        {
+            print($"Hypothesis: {text}");
+        };
+
+        dictationRecognizer.DictationComplete += (completionCause) =>
+        {
+            print(completionCause);
+            dictationRecognizer.Stop();
+            startCalibrateButton.interactable = true;
+        };
+
+        dictationRecognizer.DictationError += (error, hresult) =>
+        {
+            Debug.LogErrorFormat("Dictation error: {0}; HResult = {1}.", error, hresult);
+            textField.text = $"Dictation error: {error}; HResult = {hresult}. ";
+        };
+    }
+
+    public void OnCalibrationBackButton()
+    {
+        calibrationMenu.SetActive(false);
+        mainMenu.SetActive(true);
+        dictationRecognizer.Dispose();
+    }
+
+    public void OnStartCalibrateButton()
+    {
+        if (chosenCommand == null)
+            return;
+        dictationRecognizer.Start();
+        startCalibrateButton.interactable = false;
+    }
+
+    public void OnCommandDropdownChange()
+    {
+        if ((commandsDropdown.value - 1) == 0)
+            chosenCommand = "up";
+        else if ((commandsDropdown.value - 1) == 1)
+            chosenCommand = "down";
+        else if ((commandsDropdown.value - 1) == 2)
+            chosenCommand = "left";
+        else if ((commandsDropdown.value - 1) == 3)
+            chosenCommand = "right";
+        else
+            chosenCommand = null;
+
+        if (commandKeywords.ContainsKey(chosenCommand))
+            textField.text = commandKeywords[chosenCommand];
+    }
+
+    private void OnDestroy()
+    {
+        dictationRecognizer.Stop();
+        dictationRecognizer.Dispose();
     }
 }
