@@ -21,19 +21,24 @@ public class VoiceSnakeController : MonoBehaviour
 
     public void StartVoiceControl(Snake snake)
     {
-        calibratedActions = new Dictionary<List<string>, Action>();
-        calibratedActions.Add(startPanel.CommandKeywords["up"], Up);
-        calibratedActions.Add(startPanel.CommandKeywords["down"], Down);
-        calibratedActions.Add(startPanel.CommandKeywords["left"], Left);
-        calibratedActions.Add(startPanel.CommandKeywords["right"], Right);
-
         this.snake = snake;
 
-        actions = new Dictionary<string, Action>();
-        actions.Add("up", Up);
-        actions.Add("down", Down);
-        actions.Add("left", Left);
-        actions.Add("right", Right);
+        if (startPanel.UseCalibratedKeywords.isOn)
+        {
+            calibratedActions = new Dictionary<List<string>, Action>();
+            calibratedActions.Add(startPanel.CommandKeywords["up"], Up);
+            calibratedActions.Add(startPanel.CommandKeywords["down"], Down);
+            calibratedActions.Add(startPanel.CommandKeywords["left"], Left);
+            calibratedActions.Add(startPanel.CommandKeywords["right"], Right);
+        }
+        else
+        {
+            actions = new Dictionary<string, Action>();
+            actions.Add("up", Up);
+            actions.Add("down", Down);
+            actions.Add("left", Left);
+            actions.Add("right", Right);
+        }
 
         if (keywordRecognizer == null && dictationRecognizer == null)
         {
