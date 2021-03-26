@@ -318,7 +318,6 @@ MonoBehaviour:
   snakeMoveDelay: 1
   minimumMoveDelay: 0.1
   moveDelayDecrement: 0.05
-  gridSize: {x: 16, y: 9}
   endPanel: {fileID: 1688827643}
 --- !u!114 &1202839084
 MonoBehaviour:
@@ -503,17 +502,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b399b843064f85e4ca74e9ccd821cee6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1900714102 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 3234152884424266282, guid: 38b3124316cd0914f9174b516c2b8196, type: 3}
-  m_PrefabInstance: {fileID: 3234152884269668781}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &2010291009
 GameObject:
   m_ObjectHideFlags: 0
@@ -604,18 +592,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 237219967}
     m_Modifications:
-    - target: {fileID: 4716842041477065724, guid: 38b3124316cd0914f9174b516c2b8196, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 1688827643}
-    - target: {fileID: 4716842041477065724, guid: 38b3124316cd0914f9174b516c2b8196, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: Restart
-      objectReference: {fileID: 0}
-    - target: {fileID: 4716842041477065724, guid: 38b3124316cd0914f9174b516c2b8196, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: EndPanel, Assembly-CSharp
-      objectReference: {fileID: 0}
     - target: {fileID: 4716842041716936452, guid: 38b3124316cd0914f9174b516c2b8196, type: 3}
       propertyPath: m_Name
       value: EndPanel
@@ -712,10 +688,6 @@ PrefabInstance:
       propertyPath: gridHandler
       value: 
       objectReference: {fileID: 1202839082}
-    - target: {fileID: 4716842041716936455, guid: 38b3124316cd0914f9174b516c2b8196, type: 3}
-      propertyPath: appleLabel
-      value: 
-      objectReference: {fileID: 1900714102}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 38b3124316cd0914f9174b516c2b8196, type: 3}
 --- !u!1001 &4197798713447918434

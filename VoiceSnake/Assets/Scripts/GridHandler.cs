@@ -3,9 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration;
+using System.Resources;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
@@ -22,10 +24,9 @@ public class GridHandler : MonoBehaviour
     [Tooltip("The reduction of speed each apple eaten")]
     public float moveDelayDecrement = .05f;
 
-    [Range(0.1f, 1)] public float scale;
     [SerializeField] private EndPanel endPanel;
 
-    private DataCollector dataCollector;
+    private VoiceSnakeController vsController;
     private GridLayoutGroup gridLayout;
     private Vector2 cellSize;
     private Cell[,] cells;
@@ -35,25 +36,21 @@ public class GridHandler : MonoBehaviour
     private int collectedApples = 0;
     private float startPlayTime;
 
+    public Vector2 GridSize { get; private set; }
+    
     public int CollectedApples => collectedApples;
 
     public float StepDelay => snakeMoveDelay;
 
     public float StartPlayTime => startPlayTime;
-
-    public Vector2 GridSize { get; private set; }
     public Snake GetSnake() => snake;
     
     // Start is called before the first frame update
     void Awake()
     {
-        Initialize();
-        snake = new Snake(new Vector2(GridSize.x / 2, GridSize.y / 2), this);
-        Cell snakeHead = GetCell(snake.head);
-        snakeHead.State = CellState.Snake;
-        snake.MoveDir = Vector2.zero;
-
-        Cell apple = PlaceApple();
+        vsController = GetComponent<VoiceSnakeController>();
+        CreateGrid();
+        SetupActors();
     }
 
     private void Update()
@@ -84,6 +81,8 @@ public class GridHandler : MonoBehaviour
 
     private void GameOver()
     {
+        vsController.StopVoiceControl();
+        
         DataCollector.AddDataPoint(new DataPoint(
                 EventType.PlayerState,
                 "death",
@@ -98,10 +97,42 @@ public class GridHandler : MonoBehaviour
         gameOver = true;
     }
 
-    private void Initialize()
+    public void Restart()
+    {
+        gameOver = false;
+        snakeMoveDelay = 1f;
+        collectedApples = 0;
+        endPanel.gameObject.SetActive(false);
+        ClearGrid();
+        SetupActors();
+    }
+
+    private void SetupActors()
+    {
+        snake = new Snake(new Vector2(GridSize.x / 2, GridSize.y / 2), this);
+        Cell snakeHead = GetCell(snake.head);
+        snakeHead.State = CellState.Snake;
+        snake.MoveDir = Vector2.zero;
+        vsController.StartVoiceControl(snake);
+
+        Cell apple = PlaceApple();
+    }
+
+    private void ClearGrid()
+    {
+        for (int y = 0; y < GridSize.y; y++)
+        {
+            for (int x = 0; x < GridSize.x; x++)
+            {
+                cells[x, y].State = CellState.Empty;
+            }
+        }
+    }
+
+    private void CreateGrid()
     {
         gridLayout = GetComponent<GridLayoutGroup>();
-        GridSize = AspectRatio.GetAspectRatio(Screen.width, Screen.height);
+        GridSize = new Vector2(16, 9); //AspectRatio.GetAspectRatio(Screen.width, Screen.height);
         cells = new Cell[(int)GridSize.x, (int) GridSize.y];
         
         Canvas.ForceUpdateCanvases();
@@ -125,8 +156,6 @@ public class GridHandler : MonoBehaviour
                 cells[x, y].gameObject.name = $"Cell ({x}, {y})";
             }
         }
-
-        dataCollector = new DataCollector();
     }
 
     private Cell PlaceApple()

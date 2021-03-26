@@ -10,26 +10,45 @@ public class VoiceSnakeController : MonoBehaviour
     private Snake snake;
     private DictationRecognizer dictationRecognizer;
     private KeywordRecognizer keywordRecognizer;
-    private Dictionary<string, Action> actions = new Dictionary<string, Action>();
+    private Dictionary<string, Action> actions;
 
     private string[] keywords = { "up", "down", "left", "right"};
 
     private bool userSpeaking = false;
     private float startTime = 0;
-    
-    void Start()
+
+    public void StartVoiceControl(Snake snake)
     {
-        snake = GetComponent<GridHandler>().GetSnake();
-        
+        this.snake = snake;
+
+        actions = new Dictionary<string, Action>();
         actions.Add("up", Up);
         actions.Add("down", Down);
         actions.Add("left", Left);
         actions.Add("right", Right);
 
-        if(useDictationRecognizer)
-            CreateDictationRecognizer();
+        if (keywordRecognizer == null && dictationRecognizer == null)
+        {
+            if(useDictationRecognizer)
+                CreateDictationRecognizer();
+            else
+                CreateKeywordRecognizer();
+        }
         else
-            CreateKeywordRecognizer();
+        {
+            if(useDictationRecognizer)
+                dictationRecognizer.Start();
+            else
+                keywordRecognizer.Start();
+        }
+    }
+
+    public void StopVoiceControl()
+    {
+        if(useDictationRecognizer)
+            dictationRecognizer.Stop();
+        else
+            keywordRecognizer.Stop();
     }
 
     private void CreateKeywordRecognizer()
