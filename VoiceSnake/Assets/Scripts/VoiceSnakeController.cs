@@ -12,7 +12,7 @@ public class VoiceSnakeController : MonoBehaviour
     private DictationRecognizer dictationRecognizer;
     private KeywordRecognizer keywordRecognizer;
     private Dictionary<string, Action> actions;
-    private Dictionary<List<string>, Action> actions2 = new Dictionary<List<string>, Action>();
+    private Dictionary<List<string>, Action> calibratedActions;
 
     private string[] keywords = { "up", "down", "left", "right"};
 
@@ -21,10 +21,11 @@ public class VoiceSnakeController : MonoBehaviour
 
     public void StartVoiceControl(Snake snake)
     {
-        actions2.Add(startPanel.CommandKeywords["up"], Up);
-        actions2.Add(startPanel.CommandKeywords["down"], Down);
-        actions2.Add(startPanel.CommandKeywords["left"], Left);
-        actions2.Add(startPanel.CommandKeywords["right"], Right);
+        calibratedActions = new Dictionary<List<string>, Action>();
+        calibratedActions.Add(startPanel.CommandKeywords["up"], Up);
+        calibratedActions.Add(startPanel.CommandKeywords["down"], Down);
+        calibratedActions.Add(startPanel.CommandKeywords["left"], Left);
+        calibratedActions.Add(startPanel.CommandKeywords["right"], Right);
 
         this.snake = snake;
 
@@ -82,21 +83,26 @@ public class VoiceSnakeController : MonoBehaviour
                 delta.TotalMilliseconds,
                 -1f));
 
-            //actions[args.text].Invoke();
-
-            bool found = false;
-            foreach (var listOfKeywords in actions2.Keys)
+            if (startPanel.UseCalibratedKeywords.isOn)
             {
-                foreach (string keyword in listOfKeywords)
+                bool found = false;
+                foreach (var listOfKeywords in calibratedActions.Keys)
                 {
-                    if (keyword == args.text && !found)
+                    foreach (string keyword in listOfKeywords)
                     {
-                        actions2[listOfKeywords].Invoke();
-                        found = true;
-                        break;
+                        if (keyword == args.text && !found)
+                        {
+                            calibratedActions[listOfKeywords].Invoke();
+                            print($"Calibrated action");
+                            found = true;
+                            break;
+                        }
                     }
+                    if (found) break;
                 }
-            }
+            } else
+                actions[args.text].Invoke();
+
         };
         
         keywordRecognizer.Start();

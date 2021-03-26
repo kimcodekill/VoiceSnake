@@ -18,6 +18,7 @@ public class StartPanel : MonoBehaviour
     [SerializeField] private Button startCalibrateButton;
     [SerializeField] private Button calibrationBackButton;
     [SerializeField] private Text textField;
+    [SerializeField] private Toggle useCalibratedKeywords;
     [Header("Game")] 
     [SerializeField] private GameObject grid;
     [Header("Stuff for calibration ")]
@@ -26,7 +27,9 @@ public class StartPanel : MonoBehaviour
 
     private string chosenCommand = "";
 
-    public Dictionary<string, List<string>> CommandKeywords { get => commandKeywords; set => commandKeywords = value; }
+    public Dictionary<string, List<string>> CommandKeywords { get => commandKeywords; private set { } }
+
+    public Toggle UseCalibratedKeywords { get => useCalibratedKeywords; private set { } }
 
     public void OnStart()
     {
@@ -104,8 +107,9 @@ public class StartPanel : MonoBehaviour
     {
         if (chosenCommand == "")
             return;
-        dictationRecognizer.Start();
+
         startCalibrateButton.interactable = false;
+        dictationRecognizer.Start();
         startCalibrateButton.GetComponentInChildren<Text>().text = "Listening..";
     }
 
@@ -125,10 +129,6 @@ public class StartPanel : MonoBehaviour
         if (chosenCommand != "" && !commandKeywords.ContainsKey(chosenCommand))
             commandKeywords.Add(chosenCommand, new List<string>());
 
-        //if (chosenCommand != "" && commandKeywords.ContainsKey(chosenCommand))
-        //  textField.text = commandKeywords[chosenCommand];
-
-        print($"chosenCommand: {chosenCommand}");
     }
 
     private void OnDestroy()
