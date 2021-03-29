@@ -1,12 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class Cell : MonoBehaviour
 {
     public Color emptyColor;
-    public Color snakeColor;
+    [FormerlySerializedAs("snakeColor")] public Color snakeBodyColor;
+    public Color snakeHeadColor;
     public Color appleColor;
 
     private Image image;
@@ -36,8 +38,11 @@ public class Cell : MonoBehaviour
             case CellState.Empty:
                 c = emptyColor;
                 break;
-            case CellState.Snake:
-                c = snakeColor;
+            case CellState.SnakeBody:
+                c = snakeBodyColor;
+                break;
+            case CellState.SnakeHead:
+                c = snakeHeadColor;
                 break;
             case CellState.Apple:
                 c = appleColor;

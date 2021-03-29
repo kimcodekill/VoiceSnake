@@ -2,6 +2,7 @@
 public enum CellState
 {
     Empty,
-    Snake,
+    SnakeBody,
+    SnakeHead,
     Apple
 } 

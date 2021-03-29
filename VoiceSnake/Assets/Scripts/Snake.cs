@@ -12,6 +12,8 @@ public class Snake
     private Vector2 moveMax;
     private Vector2 moveDir;
 
+    private Queue<Vector2> moveDirs = new Queue<Vector2>();
+
     public GridHandler Handler => handler;
 
     public Vector2 MoveDir
@@ -29,8 +31,13 @@ public class Snake
 
     public Snake(Vector2 startPos, GridHandler handler) => (head, this.handler, moveMax) = (startPos, handler, handler.GridSize);
 
+    public void EnqueueMove(Vector2 moveDir) => moveDirs.Enqueue(moveDir);
+    
     public bool Move()
     {
+        if (moveDirs.Count > 0)
+            MoveDir = moveDirs.Dequeue();
+        
         if (moveDir.magnitude == 0f) //this only passes at the start
             return true;
         
@@ -52,8 +59,6 @@ public class Snake
             body.Add(head);
             handler.EatApple();
         }
-        else if (newCell.State == CellState.Snake)
-            return false; //player hit body, death
         
         //todo because we do the body after the head, the head can hit the tip of the tail when it shouldnt
         if (body.Count > 0)
@@ -61,13 +66,15 @@ public class Snake
             handler.GetCell(body.Last()).State = CellState.Empty;
             body.RemoveAt(body.Count - 1);
             body.Insert(0, prevPos);
-            handler.GetCell(prevPos).State = CellState.Snake; // i probably dont need to do this
-            
+            handler.GetCell(prevPos).State = CellState.SnakeBody; // i probably dont need to do this    
         }
         else
             handler.GetCell(prevPos).State = CellState.Empty;
         
-        newCell.State = CellState.Snake;
+        if (newCell.State == CellState.SnakeBody)
+            return false; //player hit body, death
+        
+        newCell.State = CellState.SnakeHead;
         return true;
     }
 }

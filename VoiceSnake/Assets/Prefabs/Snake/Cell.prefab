@@ -89,5 +89,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   emptyColor: {r: 0.084905684, g: 0.084905684, b: 0.084905684, a: 1}
-  snakeColor: {r: 0, g: 1, b: 0.0724349, a: 1}
+  snakeBodyColor: {r: 0, g: 0.3396226, b: 0.034224257, a: 1}
+  snakeHeadColor: {r: 0, g: 1, b: 0.0724349, a: 1}
   appleColor: {r: 1, g: 0, b: 0, a: 1}

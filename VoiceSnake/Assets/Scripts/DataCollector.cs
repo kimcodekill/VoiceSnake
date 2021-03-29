@@ -81,23 +81,22 @@ public struct DataPoint
     public int collectedFruits;
     public float stepDelay; //ms
     public double systemResponseTime; //ms
-    public double speechLength; //ms
-    public double totalInteractionTime; //ms
+    //public double speechLength; //ms
+    //public double totalInteractionTime; //ms
     public float timeOfTheRound;
 
     public DataPoint(EventType eventType, string eventName, int collectedFruits, float stepDelay,
-        double systemResponseTime, double speechLength, double totalInteractionTime, float timeOfTheRound)
+        double systemResponseTime,/* double speechLength, double totalInteractionTime,*/ float timeOfTheRound)
     {
         this.eventType = eventType;
         this.eventName = eventName;
         this.collectedFruits = collectedFruits;
         this.stepDelay = stepDelay;
         this.systemResponseTime = systemResponseTime;
-        this.speechLength = speechLength;
-        this.totalInteractionTime = totalInteractionTime;
+        //this.speechLength = speechLength;
+        //this.totalInteractionTime = totalInteractionTime;
         this.timeOfTheRound = timeOfTheRound;
     }
-
 }
 
 [Serializable]
