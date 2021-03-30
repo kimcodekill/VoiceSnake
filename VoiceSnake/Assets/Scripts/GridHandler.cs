@@ -88,8 +88,8 @@ public class GridHandler : MonoBehaviour
                 "death",
                 snake.Handler.CollectedApples,
                 snake.Handler.StepDelay,
-                -1d,
-                -1d,
+                // -1d,
+                // -1d,
                 -1d,
                 Time.realtimeSinceStartup - startRoundTime));
 
@@ -112,7 +112,7 @@ public class GridHandler : MonoBehaviour
     {
         snake = new Snake(new Vector2(GridSize.x / 2, GridSize.y / 2), this);
         Cell snakeHead = GetCell(snake.head);
-        snakeHead.State = CellState.Snake;
+        snakeHead.State = CellState.SnakeHead;
         snake.MoveDir = Vector2.zero;
         vsController.StartVoiceControl(snake);
 

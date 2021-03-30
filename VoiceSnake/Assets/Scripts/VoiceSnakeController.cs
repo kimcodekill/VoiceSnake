@@ -13,11 +13,81 @@ public class VoiceSnakeController : MonoBehaviour
     private KeywordRecognizer keywordRecognizer;
     private Dictionary<string, Action> actions;
     private Dictionary<List<string>, Action> calibratedActions;
+    private AzureVoiceRecognition voiceRecognition;
 
     private string[] keywords = { "up", "down", "left", "right"};
 
     private bool userSpeaking = false;
     private float startTime = 0;
+
+    private void Awake()
+    {
+        voiceRecognition = GetComponent<AzureVoiceRecognition>();
+    }
+
+    private void Update()
+    {
+        if (voiceRecognition.recognizer != null)
+            CheckVoiceInput();
+    }
+
+    private void CheckVoiceInput()
+    {
+        //if (voiceRecognition.recognizedText.Length > 0 && voiceRecognition.recognitionDelta != TimeSpan.Zero)
+        if(voiceRecognition.recognizedTexts.Count > 0)
+        {
+            (string text, double delta) q = voiceRecognition.recognizedTexts.Dequeue();
+            
+            //print($"text: {q.text}, delta: {q.delta}");
+            
+            //print($"text: {voiceRecognition.recognizedText} delta: {voiceRecognition.recognitionDelta.TotalMilliseconds:F2}");
+            if (startPanel.UseCalibratedKeywords.isOn)
+            {
+                bool found = false;
+                foreach (var listOfKeywords in calibratedActions.Keys)
+                {
+                    foreach (string keyword in listOfKeywords)
+                    {
+                        if (keyword == q.text && !found)
+                        {
+                            DataCollector.AddDataPoint(new DataPoint(
+                                EventType.Command, 
+                                q.text, 
+                                snake.Handler.CollectedApples,
+                                snake.Handler.StepDelay,
+                                // -1f,
+                                // -1f,
+                                q.delta,
+                                -1f));
+                            
+                            calibratedActions[listOfKeywords].Invoke();
+                            //print($"Calibrated action");
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (found) break;
+                }
+            } 
+            else if (actions.TryGetValue(q.text, out Action action))
+            {
+                DataCollector.AddDataPoint(new DataPoint(
+                    EventType.Command, 
+                    q.text, 
+                    snake.Handler.CollectedApples,
+                    snake.Handler.StepDelay,
+                    // -1f,
+                    // -1f,
+                    q.delta,
+                    -1f));
+                
+                action.Invoke();
+            }
+            
+            voiceRecognition.recognitionDelta = TimeSpan.Zero;
+            voiceRecognition.recognizedText = "";
+        }
+    }
 
     public void StartVoiceControl(Snake snake)
     {
@@ -40,20 +110,30 @@ public class VoiceSnakeController : MonoBehaviour
             actions.Add("right", Right);
         }
 
-        if (keywordRecognizer == null && dictationRecognizer == null)
+        if (voiceRecognition.recognizer == null && dictationRecognizer == null)
         {
             if(useDictationRecognizer)
                 CreateDictationRecognizer();
             else
-                CreateKeywordRecognizer();
+            {
+                CreateSpeechRecognizer();
+                //CreateKeywordRecognizer();
+            }
         }
         else
         {
-            if(useDictationRecognizer)
+            if (useDictationRecognizer)
                 dictationRecognizer.Start();
             else
-                keywordRecognizer.Start();
+                voiceRecognition.StartSpeechRecognizer();
+            //keywordRecognizer.Start();
         }
+    }
+
+    private void CreateSpeechRecognizer()
+    {
+        voiceRecognition.CreateSpeechRecognizer();
+        voiceRecognition.StartSpeechRecognizer();
     }
 
     public void StopVoiceControl()
@@ -61,7 +141,8 @@ public class VoiceSnakeController : MonoBehaviour
         if(useDictationRecognizer)
             dictationRecognizer.Stop();
         else
-            keywordRecognizer.Stop();
+            voiceRecognition.StopRecognition();
+            //keywordRecognizer.Stop();
     }
 
     private void CreateKeywordRecognizer()
@@ -83,8 +164,8 @@ public class VoiceSnakeController : MonoBehaviour
                 args.text, 
                 snake.Handler.CollectedApples,
                 snake.Handler.StepDelay,
-                netTime.TotalMilliseconds,
-                args.phraseDuration.TotalMilliseconds,
+                // netTime.TotalMilliseconds,
+                // args.phraseDuration.TotalMilliseconds,
                 delta.TotalMilliseconds,
                 -1f));
 
@@ -162,14 +243,17 @@ public class VoiceSnakeController : MonoBehaviour
         dictationRecognizer.Start();
     }
 
-    private void Up() => snake.MoveDir = Vector2.down; // up and down are flipped because grid (0,0) is top left 
-    private void Down() => snake.MoveDir = Vector2.up; 
-    private void Left() => snake.MoveDir = Vector2.left;
-    private void Right() => snake.MoveDir = Vector2.right;
+    private void Up() => snake.EnqueueMove(Vector2.down); // up and down are flipped because grid (0,0) is top left 
+    private void Down() => snake.EnqueueMove(Vector2.up); 
+    private void Left() => snake.EnqueueMove(Vector2.left);
+    private void Right() => snake.EnqueueMove(Vector2.right);
 
     private void OnDestroy()
     {
-        keywordRecognizer.Stop();
-        keywordRecognizer.Dispose();
+        if (keywordRecognizer != null)
+        {
+            keywordRecognizer.Stop();
+            keywordRecognizer.Dispose();
+        }
     }
 }

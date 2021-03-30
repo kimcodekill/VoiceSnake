@@ -252,6 +252,7 @@ GameObject:
   - component: {fileID: 1202839081}
   - component: {fileID: 1202839082}
   - component: {fileID: 1202839084}
+  - component: {fileID: 1202839083}
   m_Layer: 5
   m_Name: Grid
   m_TagString: Untagged
@@ -319,6 +320,21 @@ MonoBehaviour:
   minimumMoveDelay: 0.1
   moveDelayDecrement: 0.05
   endPanel: {fileID: 1688827643}
+--- !u!114 &1202839083
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1202839079}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 528db057a58cea244b95d66a7a1eb5cc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speechServiceAPIKey: a4826e2ab5af4996ac6357b75dc5ede6
+  speechServiceRegion: francecentral
+  recognizedText: 
 --- !u!114 &1202839084
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -706,6 +722,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 237219967}
     m_Modifications:
+    - target: {fileID: 1886829211, guid: d7b2229c20d6f5f419846b342342bbd6, type: 3}
+      propertyPath: m_IsOn
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4197798713526496008, guid: d7b2229c20d6f5f419846b342342bbd6, type: 3}
       propertyPath: m_Name
       value: StartPanel
