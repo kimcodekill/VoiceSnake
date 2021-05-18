@@ -332,8 +332,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 528db057a58cea244b95d66a7a1eb5cc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speechServiceAPIKey: a4826e2ab5af4996ac6357b75dc5ede6
-  speechServiceRegion: francecentral
+  speechServiceAPIKey: 
+  speechServiceRegion: 
   recognizedText: 
 --- !u!114 &1202839084
 MonoBehaviour:
